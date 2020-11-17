@@ -8,7 +8,7 @@ const app = express();
 
 const playerRoutes = require('./routes/player.routes');
 const homeRoutes = require('./routes/index.routes');
-const port = 2000;
+const port = 3000;
 
 
 // create connection to database
@@ -16,7 +16,7 @@ const port = 2000;
 const db = mysql.createConnection ({
     host: 'localhost',
     user: 'root',
-    password: '',
+    password: 'admin',
     database: 'socka'
 });
 

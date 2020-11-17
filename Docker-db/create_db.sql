@@ -1,4 +1,3 @@
-CREATE DATABASE socka;
 CREATE TABLE IF NOT EXISTS `players` (
     `id` int(5) NOT NULL AUTO_INCREMENT,
     `first_name` varchar(255) NOT NULL,
@@ -9,3 +8,4 @@ CREATE TABLE IF NOT EXISTS `players` (
     `user_name` varchar(20) NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+ALTER USER 'root' IDENTIFIED WITH mysql_native_password BY 'admin'
