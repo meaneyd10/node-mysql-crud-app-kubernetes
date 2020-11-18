@@ -11,3 +11,8 @@ Troubleshoot
 Getting connection refused from app to mysql container
 Run - docker run --link mysql-nodejs-app-db:db -e DATABASE_HOST=db -d -p 3000:3000 --name my-app-player meaneyd/mysql-nodejs-app-player:latest
 Creates link from the app container to mysql container
+
+
+Kubernetes
+yaml fields created, need to work on volumes and storage of the images.
+https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/

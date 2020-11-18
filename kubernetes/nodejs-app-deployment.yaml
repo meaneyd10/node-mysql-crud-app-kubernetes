@@ -12,6 +12,10 @@ spec:
       labels:
         app: playerapp
     spec:
+      volumes:
+        - name: task-pv-storage
+          persistentVolumeClaim:
+            claimName: task-pv-claim
       containers:
         - name: k8s-demo
           image: meaneyd/mysql-nodejs-app-player
@@ -25,6 +29,9 @@ spec:
           ports:
             - name: nodejs-port
               containerPort: 3000
+          volumeMounts:
+            - mountPath: "public/assets/img/"
+              name: task-pv-storage
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -74,3 +81,4 @@ spec:
   selector:
     app: playerapp
   type: NodePort
+
