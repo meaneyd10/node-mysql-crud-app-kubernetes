@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-player-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: playerapp
+  template:
+    metadata:
+      labels:
+        app: playerapp
+    spec:
+      containers:
+        - name: k8s-demo
+          image: meaneyd/mysql-nodejs-app-player
+          env:
+            - name: DATABASE_HOST
+              value: "192.168.49.2"
+            - name: MYSQL_TCP_PORT
+              value: "30006"
+            - name: port
+              value: "3000"
+          ports:
+            - name: nodejs-port
+              containerPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-player-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: playerdb
+  template:
+    metadata:
+      labels:
+        app: playerdb
+    spec:
+      containers:
+        - name: k8s-demo
+          image: meaneyd/mysql-nodejs-app-db
+          ports:
+            - name: nodejs-port
+              containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  type: NodePort
+  ports:
+    - port: 3306
+      targetPort: 3306
+      nodePort: 30006 # exposed port we can communicate to
+  selector:
+    app: playerdb
