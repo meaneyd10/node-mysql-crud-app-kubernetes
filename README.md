@@ -16,3 +16,7 @@ Creates link from the app container to mysql container
 Kubernetes
 yaml fields created, need to work on volumes and storage of the images.
 https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/
+
+Read the following on storage class and minikube
+https://github.com/docker/for-mac/issues/2460
+https://stackoverflow.com/questions/45511339/kubernetes-minikube-with-local-persistent-storage
