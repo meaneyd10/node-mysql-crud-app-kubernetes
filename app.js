@@ -16,7 +16,7 @@ const port = 3000;
 const db = mysql.createConnection ({
     host: process.env.DATABASE_HOST || 'localhost',
     user: 'root',
-    password: 'admin',
+    password: process.env.MYSQL_ROOT_PASSWORD,
     database: 'socka',
     port: process.env.MYSQL_TCP_PORT || '3306'
 });
