@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secrets
+type: Opaque
+data:
+  db-password: YWRtaW4=
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ include "nodejs-mysql-player.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "nodejs-mysql-player.name" . }}
+    helm.sh/chart: {{ include "nodejs-mysql-player.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "nodejs-mysql-player.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "nodejs-mysql-player.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: nodejs-port
+              containerPort: 3000
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: db-password
+            - name: DATABASE_HOST
+              value: "192.168.49.2"
+            - name: MYSQL_TCP_PORT
+              value: "30006"
+            - name: port
+              value: "3000"
+          volumeMounts:
+            - mountPath: "/app/public/assets/img/"
+              name: task-pv-storage
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-player-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: playerdb
+  template:
+    metadata:
+      labels:
+        app: playerdb
+    spec:
+      containers:
+        - name: k8s-demo
+          image: meaneyd/mysql-nodejs-app-db
+          ports:
+            - name: nodejs-port
+              containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  type: NodePort
+  ports:
+    - port: 3306
+      targetPort: 3306
+      nodePort: 30006 # exposed port we can communicate to
+  selector:
+    app: playerdb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-player-app-deployment
+  namespace: default
+spec:
+  ports:
+    - nodePort: 30415
+      port: 3000
+      protocol: TCP
+      targetPort: 3000
+  selector:
+    app: playerapp
+  type: NodePort
